@@ -105,12 +105,20 @@ SECTIONS
     *(COMMON)
     . = ALIGN(4);
     _ebss = .;
+/*    _end = .;
+    PROVIDE (end = .);*/
+  } > ram
+
+  .initscript ORIGIN(ram) + LENGTH(ram) - 0x80 :
+  {
+    *(.initscript)
+    /*. += 0x40;*/
     _end = .;
     PROVIDE (end = .);
   } > ram
   
   /* First location in stack is highest address in RAM */
-  PROVIDE(_fstack = ORIGIN(ram) + LENGTH(ram) - 4);
+  PROVIDE(_fstack = ORIGIN(ram) + LENGTH(ram) - 0x80 - 4);
   
   /* Stabs debugging sections.  */
   .stab          0 : { *(.stab) }

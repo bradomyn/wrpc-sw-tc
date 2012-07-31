@@ -32,6 +32,8 @@ struct shell_cmd {
 	int (*exec)(const char *args[]);
 };
 
+#define RAM_INIT_SZ 0x80
+char ram_script[RAM_INIT_SZ] __attribute__((__section__(".initscript")));
 
 static const struct shell_cmd cmds_list[] = {
 		{ "pll", 						cmd_pll },
@@ -291,6 +293,39 @@ int shell_boot_script(void)
     mprintf("executing: %s\n", cmd_buf);
     _shell_exec();
     next = 1;
+  }
+
+  return 0;
+}
+
+int shell_ram_boot(void)
+{
+  uint16_t init_sz, ptr;
+
+  init_sz = ram_script[0]<<8 | ram_script[1];
+  if( init_sz==0 || init_sz>RAM_INIT_SZ )
+  {
+    mprintf("No RAM init script or script corrupted\n");
+    return -1;
+  }
+
+  ptr = sizeof(init_sz);
+  cmd_len = 0;
+  while(ptr-sizeof(init_sz) < init_sz)
+  {
+    if(ram_script[ptr]!='\n' && ram_script[ptr]!='\0')
+    {
+      cmd_buf[cmd_len]=ram_script[ptr];
+      ++cmd_len;
+    }
+    else if(cmd_len>0)
+    {
+      cmd_buf[cmd_len]='\0';
+      printf("executing from RAM:%s\n", cmd_buf);
+      _shell_exec();
+      cmd_len = 0;
+    }
+    ++ptr;
   }
 
   return 0;

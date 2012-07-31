@@ -160,6 +160,7 @@ int main(void)
 
   //try to read and execute init script from EEPROM
   shell_boot_script();
+  shell_ram_boot();
   
   for (;;)
   {
