@@ -2,7 +2,7 @@
 BOARD = spec
 
 # 1 enables Etherbone support
-WITH_ETHERBONE=0
+WITH_ETHERBONE=1
 
 
 
