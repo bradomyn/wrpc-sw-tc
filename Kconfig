@@ -97,7 +97,19 @@ config DETERMINISTIC_BINARY
 
 	 If in doubt, say No.
 
-# The following will soon become a choice with ppsi
+choice
+       prompt "Choose your preferred ptp engine"
+       default PTP_NOPOSIX
+
 config PTP_NOPOSIX
-       boolean
-       default y
+       boolean "ptp-noposix"
+       help
+	 Select this option for the ptp-noposix engine
+
+config PPSI
+       boolean "ppsi - not recommended: not fully supported yet"
+       help
+	 Select this option for the ppsi engine. Warning: this option is
+	 work in progress, may not work or not compile at all.
+
+endchoice
