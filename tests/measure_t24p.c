@@ -22,9 +22,11 @@
 #include "softpll_ng.h"
 
 #undef PACKED
-#include "ptpd_netif.h"
 
+#include <ptpd_netif.h>
+#ifdef CONFIG_PTP_NOPOSIX /* FIXME */
 #include "ptpd.h"
+#endif
 
 #if 0 /* not used, currently */
 static int get_bitslide(int ep)
@@ -49,9 +51,11 @@ static void purge_socket(wr_socket_t * sock)
 		update_rx_queues();
 }
 
+
 static int meas_phase_range(wr_socket_t * sock, int phase_min, int phase_max,
 			    int phase_step, struct meas_entry *results)
 {
+	#ifdef CONFIG_PTP_NOPOSIX /* FIXME */
 	char buf[128];
 	wr_timestamp_t ts_rx, ts_sync = {0,};
 	wr_sockaddr_t from;
@@ -102,6 +106,7 @@ static int meas_phase_range(wr_socket_t * sock, int phase_min, int phase_max,
 	}
 	mprintf("\n");
 	return i;
+	#endif
 }
 
 static int find_transition(struct meas_entry *results, int n, int positive)

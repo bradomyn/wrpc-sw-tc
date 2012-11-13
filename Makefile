@@ -17,10 +17,11 @@ SIZE =		$(CROSS_COMPILE)size
 AUTOCONF = $(CURDIR)/include/generated/autoconf.h
 
 PTP_NOPOSIX = ptp-noposix
+PPSI = ppsi
 
 # we miss CONFIG_ARCH_LM32 as we have no other archs by now
 obj-y = arch/lm32/crt0.o arch/lm32/irq.o arch/lm32/debug.o
-obj-y += wrc_main.o wrc_ptp.o monitor/monitor.o
+obj-y += wrc_main.o
 LDS = arch/lm32/ram.ld
 
 # our linker script is preprocessed, so have a rule here
@@ -49,7 +50,10 @@ cflags-$(CONFIG_PTP_NOPOSIX) += \
 	-I$(PTP_NOPOSIX)/softpll \
 	-I$(PTP_NOPOSIX)/PTPWRd
 
-obj-$(CONFIG_PTP_NOPOSIX) += $(PTP_NOPOSIX)/PTPWRd/arith.o \
+obj-$(CONFIG_PTP_NOPOSIX) += \
+	wrc_ptp.o \
+	monitor/monitor.o \
+	$(PTP_NOPOSIX)/PTPWRd/arith.o \
 	$(PTP_NOPOSIX)/PTPWRd/bmc.o \
 	$(PTP_NOPOSIX)/PTPWRd/dep/msg.o \
 	$(PTP_NOPOSIX)/PTPWRd/dep/net.o \
@@ -62,6 +66,27 @@ obj-$(CONFIG_PTP_NOPOSIX) += $(PTP_NOPOSIX)/PTPWRd/arith.o \
 	$(PTP_NOPOSIX)/libposix/freestanding-startup.o \
 	$(PTP_NOPOSIX)/libposix/freestanding-wrapper.o \
 	$(PTP_NOPOSIX)/softpll/softpll_ng.o
+
+cflags-$(CONFIG_PPSI) += \
+	-ffreestanding \
+	-Os \
+	-ffunction-sections \
+	-fdata-sections \
+	-Iinclude \
+	-I$(PTP_NOPOSIX)/softpll \
+	-I$(PTP_NOPOSIX)/wrsw_hal \
+	-I$(PPSI)/include \
+	-I$(PPSI)/arch-spec/include \
+	-I$(PPSI)/proto-ext-whiterabbit \
+	-Iboards/spec
+
+obj-$(CONFIG_PPSI) += \
+	wrc_ptp_ppsi.o \
+	monitor/monitor_ppsi.o \
+	$(PTP_NOPOSIX)/softpll/softpll_ng.o \
+	$(PPSI)/ppsi.o \
+	$(PPSI)/arch-spec/libarch.a \
+	$(PPSI)/proto-ext-whiterabbit/libwr.a \
 
 CFLAGS_PLATFORM  = -mmultiply-enabled -mbarrel-shift-enabled
 LDFLAGS_PLATFORM = -mmultiply-enabled -mbarrel-shift-enabled \
@@ -91,7 +116,15 @@ REVISION=$(shell git describe --dirty --always)
 all: tools $(OUTPUT).ram $(OUTPUT).vhd
 
 .PRECIOUS: %.elf %.bin
-.PHONY: all tools clean gitmodules
+
+PHONYVAR = all tools clean gitmodules
+ifeq ($(CONFIG_PPSI), y)
+PHONYVAR += $(PPSI)/ppsi.o
+endif
+.PHONY: $(PHONYVAR)
+
+$(PPSI)/ppsi.o $(PPSI)/arch-spec/libarch.a $(PPSI)/proto-ext-whiterabbit/libwr.a:
+	$(MAKE) -C $(PPSI) ARCH=spec PROTO_EXT=whiterabbit HAS_FULL_DIAG=y
 
 $(OUTPUT).elf: $(LDS) $(AUTOCONF) gitmodules $(OUTPUT).o
 	$(CC) $(CFLAGS) -DGIT_REVISION=\"$(REVISION)\" -c revision.c
@@ -121,6 +154,7 @@ include/board.h:
 
 clean:
 	rm -f $(OBJS) $(OUTPUT).elf $(OUTPUT).bin $(OUTPUT).ram include/board.h
+	find . -name '*.[oa]' | xargs rm
 
 %.o:		%.c
 	${CC} $(CFLAGS) $(PTPD_CFLAGS) $(INCLUDE_DIR) $(LIB_DIR) -c $*.c -o $@

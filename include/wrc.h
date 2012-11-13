@@ -18,6 +18,9 @@ int mprintf(char const *format, ...)
 #define sprintf pp_sprintf
 #endif
 
+#undef offsetof
+#define offsetof(TYPE, MEMBER) ((int) &((TYPE *)0)->MEMBER)
+
 void wrc_mon_gui(void);
 void shell_init(void);
 int wrc_log_stats(uint8_t onetime);

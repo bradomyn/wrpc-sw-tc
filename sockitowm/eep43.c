@@ -9,6 +9,15 @@
 
 //#define DEBUG_EEP43 1
 
+#ifdef CONFIG_PPSI /* FIXME */
+static int usleep(useconds_t useconds)
+{
+  while(useconds--) asm volatile("nop");
+
+  return 0;
+}
+#endif
+
 static int Copy2Mem43(int portnum, uchar * SerialNum);
 
 int Write43(int portnum, uchar * SerialNum, int page, uchar * page_buffer)

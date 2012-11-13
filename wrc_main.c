@@ -18,7 +18,9 @@
 #include "endpoint.h"
 #include "minic.h"
 #include "pps_gen.h"
+#ifdef CONFIG_PTPNOPOSIX /* FIXME */
 #include "ptpd.h"
+#endif
 #include "ptpd_netif.h"
 #include "i2c.h"
 //#include "eeprom.h"
@@ -110,8 +112,9 @@ static int wrc_check_link()
 	return rv;
 }
 
-int wrc_extra_debug = 0;
 
+int wrc_extra_debug = 0;
+#ifndef CONFIG_PPSI
 void wrc_debug_printf(int subsys, const char *fmt, ...)
 {
 	va_list ap;
@@ -127,19 +130,21 @@ void wrc_debug_printf(int subsys, const char *fmt, ...)
 	va_end(ap);
 }
 
+#endif
+
 int wrc_man_phase = 0;
 
 static void ui_update()
 {
 
 	if (wrc_ui_mode == UI_GUI_MODE) {
-		wrc_mon_gui();
+		/* FIXME monitor wrc_mon_gui(); */
 		if (uart_read_byte() == 27) {
 			shell_init();
 			wrc_ui_mode = UI_SHELL_MODE;
 		}
 	} else if (wrc_ui_mode == UI_STAT_MODE) {
-		wrc_log_stats(0);
+		/* FIXME wrc_log_stats(0); */
 		if (uart_read_byte() == 27) {
 			shell_init();
 			wrc_ui_mode = UI_SHELL_MODE;
