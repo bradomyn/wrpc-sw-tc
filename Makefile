@@ -76,6 +76,7 @@ cflags-$(CONFIG_PPSI) += \
 	-I$(PTP_NOPOSIX)/softpll \
 	-I$(PTP_NOPOSIX)/wrsw_hal \
 	-I$(PPSI)/include \
+	-I$(PPSI)/arch-spec \
 	-I$(PPSI)/arch-spec/include \
 	-I$(PPSI)/proto-ext-whiterabbit \
 	-Iboards/spec

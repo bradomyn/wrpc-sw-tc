@@ -138,13 +138,13 @@ static void ui_update()
 {
 
 	if (wrc_ui_mode == UI_GUI_MODE) {
-		/* FIXME monitor wrc_mon_gui(); */
+		wrc_mon_gui();
 		if (uart_read_byte() == 27) {
 			shell_init();
 			wrc_ui_mode = UI_SHELL_MODE;
 		}
 	} else if (wrc_ui_mode == UI_STAT_MODE) {
-		/* FIXME wrc_log_stats(0); */
+		wrc_log_stats(0);
 		if (uart_read_byte() == 27) {
 			shell_init();
 			wrc_ui_mode = UI_SHELL_MODE;
