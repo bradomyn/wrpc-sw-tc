@@ -9,9 +9,9 @@ uint32_t timer_get_tics()
 
 void timer_delay(uint32_t how_long)
 {
-	uint32_t t_start;
+//	uint32_t t_start;
 
-	t_start = timer_get_tics();
+//	t_start = timer_get_tics();
 
-	while (t_start + how_long > timer_get_tics()) ;
+//	while (t_start + how_long > timer_get_tics()) ;
 }

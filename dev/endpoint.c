@@ -74,8 +74,8 @@ void ep_init(uint8_t mac_addr[])
 	EP = (volatile struct EP_WB *)BASE_EP;
 	set_mac_addr(mac_addr);
 
-	*(unsigned int *)(0x62000) = 0x2;	// reset network stuff (cleanup required!)
-	*(unsigned int *)(0x62000) = 0;
+//	*(unsigned int *)(0x62000) = 0x2;	// reset network stuff (cleanup required!)
+//	*(unsigned int *)(0x62000) = 0;
 
 	EP->ECR = 0;		/* disable Endpoint */
 	EP->VCR0 = EP_VCR0_QMODE_W(3);	/* disable VLAN unit - not used by WRPC */
@@ -100,14 +100,14 @@ int ep_enable(int enabled, int autoneg)
 /* Disable the endpoint */
 	EP->ECR = 0;
 
-	mprintf("ID: %x\n", EP->IDCODE);
+//	mprintf("ID: %x\n", EP->IDCODE);
 
 /* Load default packet classifier rules - see ep_pfilter.c for details */
 	pfilter_init_default();
 
 /* Enable TX/RX paths, reset RMON counters */
 	EP->ECR = EP_ECR_TX_EN | EP_ECR_RX_EN | EP_ECR_RST_CNT;
-
+#if 0
 	autoneg_enabled = autoneg;
 
 /* Reset the GTP Transceiver - it's important to do the GTP phase alignment every time
@@ -121,10 +121,11 @@ int ep_enable(int enabled, int autoneg)
 	pcs_write(MDIO_REG_ADVERTISE, 0);
 
 	mcr = MDIO_MCR_SPEED1000_MASK | MDIO_MCR_FULLDPLX_MASK;
-	if (autoneg)
-		mcr |= MDIO_MCR_ANENABLE | MDIO_MCR_ANRESTART;
+//	if (autoneg)
+//		mcr |= MDIO_MCR_ANENABLE | MDIO_MCR_ANRESTART;
 
 	pcs_write(MDIO_REG_MCR, mcr);
+#endif
 	return 0;
 }
 

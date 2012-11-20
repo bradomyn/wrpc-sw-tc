@@ -35,12 +35,12 @@ void wrc_initialize()
 	char sfp_pn[17];
 
 	sdb_find_devices();
-	uart_init();
+/*	uart_init();
 
-	mprintf("WR Core: starting up...\n");
+	mprintf("WR Core: starting up...\n");*/
 
 	timer_init(1);
-	owInit();
+/*	owInit();
 
 	mac_addr[0] = 0x08;	//
 	mac_addr[1] = 0x00;	// CERN OUI
@@ -49,29 +49,31 @@ void wrc_initialize()
 	own_scanbus(ONEWIRE_PORT);
 	if (get_persistent_mac(ONEWIRE_PORT, mac_addr) == -1) {
 		mprintf("Unable to determine MAC address\n");
-		mac_addr[0] = 0x11;	//
-		mac_addr[1] = 0x22;	//
-		mac_addr[2] = 0x33;	// fallback MAC if get_persistent_mac fails
-		mac_addr[3] = 0x44;	//
-		mac_addr[4] = 0x55;	//
-		mac_addr[5] = 0x66;	//
 	}
 
 	TRACE_DEV("Local MAC address: %x:%x:%x:%x:%x:%x\n", mac_addr[0],
 		  mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4],
 		  mac_addr[5]);
+*/
+	mac_addr[0] = 0x11;	//
+	mac_addr[1] = 0x22;	//
+	mac_addr[2] = 0x33;	// fallback MAC if get_persistent_mac fails
+	mac_addr[3] = 0x44;	//
+	mac_addr[4] = 0x55;	//
+	mac_addr[5] = 0x66;	//
 
 	ep_init(mac_addr);
 	ep_enable(1, 1);
 
-	minic_init();
 	pps_gen_init();
+/*	minic_init();
 	wrc_ptp_init();
 
 #ifdef CONFIG_ETHERBONE
 	ipv4_init("wru1");
 	arp_init("wru1");
 #endif
+*/
 }
 
 #define LINK_WENT_UP 1
@@ -147,6 +149,9 @@ int main(void)
 	wrc_ui_mode = UI_SHELL_MODE;
 
 	wrc_initialize();
+	
+	for(;;);
+	
 	shell_init();
 
 	wrc_ptp_set_mode(WRC_MODE_SLAVE);

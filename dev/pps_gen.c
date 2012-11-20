@@ -32,7 +32,7 @@ int pps_gen_init()
 
 	ppsg_write(CR, cr | PPSG_CR_CNT_SET);
 	ppsg_write(CR, cr);
-	ppsg_write(ESCR, 0x6);	/* enable PPS output */
+	ppsg_write(ESCR, PPSG_ESCR_PPS_VALID | PPSG_ESCR_TM_VALID);	/* enable PPS output */
 }
 
 /* Adjusts the nanosecond (refclk cycle) counter by atomically adding (how_much) cycles. */
