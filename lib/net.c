@@ -222,7 +222,7 @@ int ptpd_netif_recvfrom(wr_socket_t * sock, wr_sockaddr_t * from, void *data,
 	q->avail += wrap_copy_in(&hwts, q, sizeof(struct hw_timestamp));
 	q->avail += wrap_copy_in(data, q, min(size, data_length));
 
-	from->ethertype = ntohs(hdr.ethtype);
+	from->ethertype = hdr.ethtype;
 	memcpy(from->mac, hdr.srcmac, 6);
 	memcpy(from->mac_dest, hdr.dstmac, 6);
 
