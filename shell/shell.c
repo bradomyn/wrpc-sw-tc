@@ -61,6 +61,9 @@ static const struct shell_cmd cmds_list[] = {
 #ifdef CONFIG_ETHERBONE
 	{"ip",		cmd_ip},
 #endif
+#ifdef CONFIG_PPSI
+	{"verbose", 	cmd_verbose},
+#endif
 	{"mac",		cmd_mac},
 	{"sdb",		cmd_sdb},
 
