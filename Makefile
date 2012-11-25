@@ -85,6 +85,7 @@ obj-$(CONFIG_PPSI) += \
 	wrc_ptp_ppsi.o \
 	monitor/monitor_ppsi.o \
 	$(PTP_NOPOSIX)/softpll/softpll_ng.o \
+	$(PTP_NOPOSIX)/libposix/freestanding-wrapper.o \
 	$(PPSI)/ppsi.o \
 	$(PPSI)/arch-spec/libarch.a \
 	$(PPSI)/proto-ext-whiterabbit/libwr.a \
