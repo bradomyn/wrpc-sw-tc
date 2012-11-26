@@ -20,6 +20,7 @@
 #define PTPD_NETIF_NOT_FOUND 		-3
 
 // GCC-specific
+#undef PACKED
 #define PACKED __attribute__((packed))
 
 #define PHYS_PORT_ANY			(0xffff)
