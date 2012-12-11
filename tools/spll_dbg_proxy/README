@@ -1,0 +1,19 @@
+SoftPLL debug proxy
+
+Tomasz Wlostowski/2012
+
+Purpose of the program:
+spll_dbg_proxy acts as a bridge between the hardware debug queue in the softpll core and an user-space plotting application (spll_debugger.py), making
+it possible to record the response of the PLL on-the-fly and analyze it later. The program continuously polls the queue and provides the data for client
+applications over a TCP/IP connection. 
+
+How to use:
+- run as root. The program will connect to the first SPEC.
+- run spll_debugger.py (you may need to change the hostname), edit the start event and the number of samples to be acquired
+- reload wrc LM32 firmware
+- a window with the response should pop up in few seconds
+
+Remarks:
+The version included in wrpc-sw works with the wr_core_demo bitstream, with the softpll mapped at 0x20200. This will change in the future with the inclusion
+of SDB descriptors in the VHDL.
+
