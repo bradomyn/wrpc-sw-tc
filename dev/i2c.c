@@ -9,9 +9,11 @@
  */
 #include "types.h"
 #include "board.h"
-#include "syscon.h"
+#include "i2c.h"
 
 #define I2C_DELAY 300
+
+static struct i2c_bitbang_interface *i2c_if[MAX_I2C_BUSSES];
 
 void mi2c_delay()
 {
@@ -20,9 +22,17 @@ void mi2c_delay()
 		asm volatile ("nop");
 }
 
-#define M_SDA_OUT(i, x) { gpio_out(i2c_if[i].sda, x); mi2c_delay(); }
-#define M_SCL_OUT(i, x) { gpio_out(i2c_if[i].scl, x); mi2c_delay(); }
-#define M_SDA_IN(i) gpio_in(i2c_if[i].sda)
+#define M_SDA_OUT(i, x) { i2c_if[i]->sda(x); mi2c_delay(); }
+#define M_SCL_OUT(i, x) { i2c_if[i]->scl(x); mi2c_delay(); }
+#define M_SDA_IN(i) i2c_if[i]->sda(1)
+
+void mi2c_register_interface(uint8_t i2cif, struct i2c_bitbang_interface *iface)
+{
+	i2c_if[i2cif] = iface;
+	
+	iface->scl(1);
+	iface->sda(1);
+}
 
 void mi2c_start(uint8_t i2cif)
 {
@@ -114,17 +124,14 @@ uint8_t mi2c_devprobe(uint8_t i2cif, uint8_t i2c_addr)
 	return ret;
 }
 
-//void mi2c_scan(uint8_t i2cif)
-//{
-//    int i;
-//
-//    //for(i=0;i<0x80;i++)
-//    for(i=0x50;i<0x51;i++)
-//    {
-//     mi2c_start(i2cif);
-//     if(!mi2c_put_byte(i2cif, i<<1)) mprintf("found : %x\n", i);
-//     mi2c_stop(i2cif);
-//
-//    }
-//    mprintf("Nothing more found...\n");
-//}
+void mi2c_scan(uint8_t i2cif)
+{
+	int i;
+
+	mprintf("Scanning I2C bus %d\n", i2cif);
+	for(i=0;i<0x80;i++)
+	{
+		if(mi2c_devprobe(i2cif, i))
+			mprintf("Found : %x\n", i);
+    }
+}

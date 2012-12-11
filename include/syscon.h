@@ -22,16 +22,6 @@ struct SYSCON_WB {
 #define GPIO_BTN2     SYSC_GPSR_BTN2
 #define GPIO_SFP_DET  SYSC_GPSR_SFP_DET
 
-#define WRPC_FMC_I2C  0
-#define WRPC_SFP_I2C  1
-
-struct s_i2c_if {
-	uint32_t scl;
-	uint32_t sda;
-};
-
-extern struct s_i2c_if i2c_if[2];
-
 void timer_init(uint32_t enable);
 uint32_t timer_get_tics();
 void timer_delay(uint32_t how_long);
@@ -58,5 +48,7 @@ static inline int sysc_get_memsize()
 {
 	return (SYSC_HWFR_MEMSIZE_R(syscon->HWFR) + 1) * 16;
 }
+
+void syscon_init();
 
 #endif
