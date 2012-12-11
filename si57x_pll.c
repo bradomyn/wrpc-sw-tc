@@ -133,7 +133,7 @@ void _irq_entry()
 		src = SPLL_TRR_R0_CHAN_ID_R(trr);
 		tag = SPLL_TRR_R0_VALUE_R(trr);
 
-//		printf("w %d \n", tag & 0x10000 ? 1: 0);
+/* execute the control algo */
 		mpll_bangbang_update(&auxpll, tag, src);
 		count++;
 	}

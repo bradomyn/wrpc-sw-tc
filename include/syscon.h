@@ -4,6 +4,7 @@
 #include <inttypes.h>
 
 #include "board.h"
+#include "i2c.h"
 #include <hw/wrc_syscon_regs.h>
 
 struct SYSCON_WB {

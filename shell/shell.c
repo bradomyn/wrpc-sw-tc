@@ -16,6 +16,7 @@
 #include <wrc.h>
 #include "util.h"
 #include "uart.h"
+#include "i2c.h"
 #include "syscon.h"
 #include "shell.h"
 #include "eeprom.h"
