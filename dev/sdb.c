@@ -147,4 +147,5 @@ void sdb_find_devices(void)
 	BASE_UART =          find_device(0xe2d13d04);
 	BASE_ONEWIRE =       find_device(0x779c5443);
 	BASE_ETHERBONE_CFG = find_device(0x68202b22);
+	BASE_AUX = 0x20700;
 }

@@ -49,7 +49,7 @@ static void wrc_initialize()
 
 	mprintf("WR Core: starting up...\n");
 
-	timer_init(1);
+	syscon_init(); 
 	owInit();
 
 	mac_addr[0] = 0x08;	//
@@ -169,11 +169,11 @@ int main(void)
 	wrc_initialize();
 	shell_init();
 
-	wrc_ptp_set_mode(WRC_MODE_SLAVE);
+	si57x_main();
+
+	wrc_ptp_set_mode(WRC_MODE_MASTER);
 	wrc_ptp_start();
 
-	//try to read and execute init script from EEPROM
-	shell_boot_script();
 
 	for (;;) {
 		int l_status = wrc_check_link();
@@ -203,5 +203,6 @@ int main(void)
 		wrc_ptp_update();
 		spll_update_aux_clocks();
 		check_stack();
+
 	}
 }

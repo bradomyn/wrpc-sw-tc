@@ -20,7 +20,7 @@ PTP_NOPOSIX = ptp-noposix
 
 # we miss CONFIG_ARCH_LM32 as we have no other archs by now
 obj-y = arch/lm32/crt0.o arch/lm32/irq.o arch/lm32/debug.o
-obj-y += wrc_main.o wrc_ptp.o monitor/monitor.o
+obj-y += wrc_main.o wrc_ptp.o monitor/monitor.o si57x_pll.o
 LDS = arch/lm32/ram.ld
 
 # our linker script is preprocessed, so have a rule here
