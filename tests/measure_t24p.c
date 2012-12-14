@@ -44,10 +44,11 @@ struct meas_entry {
 	int ahead;
 };
 
-static void purge_socket(wr_socket_t * sock)
+
+static void purge_socket(wr_socket_t *sock, char *buf)
 {
 	wr_sockaddr_t from;
-	char buf[128];
+
 	update_rx_queues();
 	while (ptpd_netif_recvfrom(sock, &from, buf, 128, NULL) > 0)
 		update_rx_queues();
@@ -129,7 +130,7 @@ static int meas_phase_range(wr_socket_t * sock, int phase_min, int phase_max,
 
 	while (spll_shifter_busy(0)) ;
 
-	purge_socket(sock);
+	purge_socket(sock, buf);
 
 	i = 0;
 	while (setpoint <= phase_max) {
@@ -161,7 +162,7 @@ static int meas_phase_range(wr_socket_t * sock, int phase_min, int phase_max,
 				setpoint += phase_step;
 				spll_set_phase_shift(0, setpoint);
 				while (spll_shifter_busy(0)) ;
-				purge_socket(sock);
+				purge_socket(sock, buf);
 
 				ts_sync.correct = 0;
 				i++;
