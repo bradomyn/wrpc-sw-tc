@@ -114,7 +114,6 @@ static int wrc_check_link()
 
 
 int wrc_extra_debug = 0;
-#ifndef CONFIG_PPSI
 void wrc_debug_printf(int subsys, const char *fmt, ...)
 {
 	va_list ap;
@@ -122,15 +121,17 @@ void wrc_debug_printf(int subsys, const char *fmt, ...)
 	if (wrc_ui_mode)
 		return;
 
+#ifndef CONFIG_PPSI
 	va_start(ap, fmt);
 
 	if (wrc_extra_debug || (!wrc_extra_debug && (subsys & TRACE_SERVO)))
 		vprintf(fmt, ap);
 
 	va_end(ap);
-}
-
+#else
+	pp_vsprintf(subsys, fmt, ap);
 #endif
+}
 
 int wrc_man_phase = 0;
 
