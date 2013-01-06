@@ -60,6 +60,4 @@ static inline int sysc_get_memsize()
 	return (SYSC_HWFR_MEMSIZE_R(syscon->HWFR) + 1) * 16;
 }
 
-int spec_time(void);
-
 #endif

@@ -44,23 +44,3 @@ void timer_delay(uint32_t how_long)
 
 	while (t_start + how_long > timer_get_tics()) ;
 }
-
-/* return a monotonic seconds count from the counter above;
- * FIXME horrible obsolete code, still used by ppsi */
-int spec_time(void)
-{
-	static uint32_t prev, secs;
-	static int rest; /* millisecs */
-	uint32_t tics = timer_get_tics();
-
-	if (!prev) {
-		prev = tics;
-		secs = 1; /* Start from a small number! */
-		return secs;
-	}
-	rest += tics - prev;
-	secs += rest / 1000;
-	rest %= 1000;
-	prev = tics;
-	return secs;
-}
