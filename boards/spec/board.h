@@ -19,7 +19,7 @@
 #ifndef CONFIG_PPSI
 #define NET_MAX_SOCKETS 4
 #else
-#define NET_MAX_SOCKETS 2
+#define NET_MAX_SOCKETS 1
 #endif
 
 /* Socket buffer size, determines the max. RX packet size */
