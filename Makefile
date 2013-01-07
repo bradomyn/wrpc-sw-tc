@@ -126,7 +126,8 @@ endif
 .PHONY: $(PHONYVAR)
 
 $(PPSI)/ppsi.o $(PPSI)/arch-spec/libarch.a $(PPSI)/proto-ext-whiterabbit/libwr.a:
-	$(MAKE) -C $(PPSI) ARCH=spec PROTO_EXT=whiterabbit HAS_FULL_DIAG=y
+	$(MAKE) -C $(PPSI) ARCH=spec PROTO_EXT=whiterabbit HAS_FULL_DIAG=y \
+		CROSS_COMPILE=$(CROSS_COMPILE)
 
 $(OUTPUT).elf: $(LDS) $(AUTOCONF) gitmodules $(OUTPUT).o
 	$(CC) $(CFLAGS) -DGIT_REVISION=\"$(REVISION)\" -c revision.c
