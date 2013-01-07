@@ -10,13 +10,6 @@ config RAMSIZE
 	 more features you may want to adjust the FPGA size and
 	 choose your preferred value here.
 
-config STACKSIZE
-       int "Size of the stack area needed by this program"
-       default 2048
-       help
-         The linker complains if the code doesn't fit into RAM, but
-	 we must also consider the stack, or the program will crash
-	 badly at run time.
 choice
        prompt "Choose your preferred ptp engine"
        default PTP_NOPOSIX
@@ -44,6 +37,15 @@ config PPSI_VERBOSITY
 	  2 means more verbose messages
 	default 0
 	range 0 2
+
+config STACKSIZE
+       int "Size of the stack area needed by this program"
+       default 3584 if PPSI
+       default 2048
+       help
+         The linker complains if the code doesn't fit into RAM, but
+	 we must also consider the stack, or the program will crash
+	 badly at run time.
 
 config MPRINTF
 	boolean "Use the old mprintf implementation for printf"
