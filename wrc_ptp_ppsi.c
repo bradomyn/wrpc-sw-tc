@@ -22,7 +22,8 @@
 #include "uart.h"
 
 static int ptp_enabled = 0, ptp_mode = WRC_MODE_UNKNOWN;
-static struct pp_instance ppi_static;
+struct pp_instance ppi_static; /* FIXME: no more static, because used in
+				   tests/measure_t24p.c */
 int pp_diag_verbosity = CONFIG_PPSI_VERBOSITY;
 
 /*ppi fields*/
