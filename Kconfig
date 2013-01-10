@@ -38,6 +38,15 @@ config PPSI_VERBOSITY
 	default 0
 	range 0 2
 
+config PPSI_RUNTIME_VERBOSITY
+       depends on PPSI
+       boolean "Enable runtime verbosity setting"
+       default n
+       help
+         If set, this option permits to change the verbosity of PPSI engine
+         runtime. This causes a bigger RAM occupation, so it is suggested
+         to set it only for debugging purpose.
+
 config STACKSIZE
        int "Size of the stack area needed by this program"
        default 3584 if PPSI

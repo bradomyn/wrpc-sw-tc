@@ -61,7 +61,7 @@ static const struct shell_cmd cmds_list[] = {
 #ifdef CONFIG_ETHERBONE
 	{"ip",		cmd_ip},
 #endif
-#ifdef CONFIG_PPSI
+#if (defined CONFIG_PPSI) && (defined CONFIG_PPSI_RUNTIME_VERBOSITY)
 	{"verbose", 	cmd_verbose},
 #endif
 	{"mac",		cmd_mac},
