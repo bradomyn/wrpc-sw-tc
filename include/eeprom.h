@@ -57,10 +57,10 @@ int8_t eeprom_phtrans(uint8_t i2cif, uint8_t i2c_addr, uint32_t * val,
 int8_t eeprom_init_erase(uint8_t i2cif, uint8_t i2c_addr);
 int8_t eeprom_init_add(uint8_t i2cif, uint8_t i2c_addr, const char *args[]);
 int32_t eeprom_init_show(uint8_t i2cif, uint8_t i2c_addr);
-int8_t eeprom_init_readcmd(uint8_t i2cif, uint8_t i2c_addr, uint8_t * buf,
+int8_t eeprom_init_readcmd(uint8_t i2cif, uint8_t i2c_addr, uint8_t *buf,
 			   uint8_t bufsize, uint8_t next);
 
-int32_t eeprom_get_sfp(uint8_t i2cif, uint8_t i2c_addr, struct s_sfpinfo *sfp,
+int32_t eeprom_get_sfp(uint8_t i2cif, uint8_t i2c_addr, struct s_sfpinfo * sfp,
 		       uint8_t add, uint8_t pos);
 int8_t eeprom_init_purge(uint8_t i2cif, uint8_t i2c_addr);
 

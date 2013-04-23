@@ -69,4 +69,6 @@ static int cmd_init(const char *args[])
 #endif
 
 DEFINE_WRC_COMMAND(init) = {
-.name = "init",.exec = cmd_init,};
+	.name = "init",
+	.exec = cmd_init,
+};

@@ -210,4 +210,6 @@ static int cmd_sfp(const char *args[])
 #endif
 
 DEFINE_WRC_COMMAND(sfp) = {
-.name = "sfp",.exec = cmd_sfp,};
+	.name = "sfp",
+	.exec = cmd_sfp,
+};

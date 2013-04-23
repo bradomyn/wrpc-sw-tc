@@ -104,4 +104,6 @@ static int cmd_calibration(const char *args[])
 #endif
 
 DEFINE_WRC_COMMAND(calibration) = {
-.name = "calibration",.exec = cmd_calibration,};
+	.name = "calibration",
+	.exec = cmd_calibration,
+};
