@@ -6,8 +6,9 @@
 #define __BATHOS_W1_H__
 
 #include <stdint.h>
+#include <eeprom.h>
 
-#define W1_MAX_DEVICES 8 /* we have no alloc */
+#define W1_MAX_DEVICES 8	/* we have no alloc */
 
 struct w1_dev {
 	struct w1_bus *bus;
@@ -19,9 +20,8 @@ static inline int w1_class(struct w1_dev *dev)
 	return dev->rom & 0xff;
 }
 
-
 struct w1_bus {
-	unsigned long detail; /* gpio bit or whatever (driver-specific) */
+	unsigned long detail;	/* gpio bit or whatever (driver-specific) */
 	struct w1_dev devs[W1_MAX_DEVICES];
 };
 
@@ -31,9 +31,9 @@ struct w1_bus {
  * operations, to keep the thing simple and small).
  */
 struct w1_ops {
-	int (*reset)(struct w1_bus *bus);	/* returns 1 on "present" */
-	int (*read_bit)(struct w1_bus *bus);
-	void (*write_bit)(struct w1_bus *bus, int bit);
+	int (*reset) (struct w1_bus * bus);	/* returns 1 on "present" */
+	int (*read_bit) (struct w1_bus * bus);
+	void (*write_bit) (struct w1_bus * bus, int bit);
 };
 
 /* Library functions */
@@ -63,23 +63,33 @@ extern void w1_match_rom(struct w1_dev *dev);
 #define W1_CMDR_EXT_R_MEMORY	0xa5
 
 /* Temperature conversion takes time: by default wait, but allow flags */
-#define W1_FLAG_NOWAIT		0x01	/* start conversion only*/
+#define W1_FLAG_NOWAIT		0x01	/* start conversion only */
 #define W1_FLAG_COLLECT		0x02	/* don't start, just get output */
-
-/* These functions are dev-specific */
-extern int32_t w1_read_temp(struct w1_dev *dev, unsigned long flags);
-extern int w1_read_eeprom(struct w1_dev *dev,
-			  int offset, uint8_t *buffer, int blen);
-extern int w1_write_eeprom(struct w1_dev *dev,
-			   int offset, const uint8_t *buffer, int blen);
 
 /* These are generic, using the first suitable device in the bus */
 extern int32_t w1_read_temp_bus(struct w1_bus *bus, unsigned long flags);
 extern int w1_read_eeprom_bus(struct w1_bus *bus,
-			    int offset, uint8_t *buffer, int blen);
+			      int offset, uint8_t * buffer, int blen);
 extern int w1_write_eeprom_bus(struct w1_bus *bus,
-			     int offset, const uint8_t *buffer, int blen);
+			       int offset, const uint8_t * buffer, int blen);
 
+/* These functions are dev-specific */
+extern int32_t w1_read_temp(struct w1_dev *dev, unsigned long flags);
+extern int w1_read_eeprom(struct w1_dev *dev,
+			  int offset, uint8_t * buffer, int blen);
+extern int w1_write_eeprom(struct w1_dev *dev,
+			   int offset, const uint8_t * buffer, int blen);
+
+/* function tool for manipulating the eeprom*/
+extern int w1_eemprom_sfpdb_erase();
+extern int w1_eeprom_get_sfp(struct s_sfpinfo *sfp, uint8_t add, uint8_t pos);
+extern int w1_eeprom_match_sfp(struct s_sfpinfo *sfp);
+extern int w1_eeprom_phtrans(uint32_t * val, uint8_t write);
+extern int w1_eeprom_init_erase();
+extern int w1_eeprom_init_add(const char *args[]);
+extern int w1_eeprom_init_show();
+extern int w1_eeprom_init_readcmd(uint8_t * buf, uint8_t next);
+extern int w1_eeprom_present();
 extern struct w1_ops wrpc_w1_ops;
 extern struct w1_bus wrpc_w1_bus;
 

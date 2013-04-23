@@ -11,9 +11,11 @@
 #include <wrc.h>
 #include "shell.h"
 #include "eeprom.h"
+#include "w1.h"
 #include "syscon.h"
 #include "i2c.h"
 
+#ifdef CONFIG_EEPROM_I2C
 static int cmd_init(const char *args[])
 {
 	if (!mi2c_devprobe(WRPC_FMC_I2C, FMC_EEPROM_ADR)) {
@@ -39,8 +41,32 @@ static int cmd_init(const char *args[])
 
 	return 0;
 }
+#endif
+
+#ifdef CONFIG_EEPROM_W1
+static int cmd_init(const char *args[])
+{
+	if (args[0] && !strcasecmp(args[0], "erase")) {
+		if (w1_eeprom_init_erase() < 0)
+			mprintf("Could not erase init script\n");
+	} else if (args[0] && !strcasecmp(args[0], "purge")) {
+		/*no purge function */
+	} else if (args[1] && !strcasecmp(args[0], "add")) {
+
+		if (w1_eeprom_init_add(args) < 0)
+			mprintf("Could not add the command\n");
+		else
+			mprintf("Command added\n");
+	} else if (args[0] && !strcasecmp(args[0], "show")) {
+		if (w1_eeprom_init_show() < 0)
+			pp_printf("Error reading EEPROM\n");
+	} else if (args[0] && !strcasecmp(args[0], "boot")) {
+		shell_boot_script();
+	}
+
+	return 0;
+}
+#endif
 
 DEFINE_WRC_COMMAND(init) = {
-	.name = "init",
-	.exec = cmd_init,
-};
+.name = "init",.exec = cmd_init,};

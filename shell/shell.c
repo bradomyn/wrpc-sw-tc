@@ -19,6 +19,7 @@
 #include "syscon.h"
 #include "shell.h"
 #include "eeprom.h"
+#include "w1.h"
 
 #define SH_MAX_LINE_LEN 80
 #define SH_MAX_ARGS 8
@@ -253,14 +254,26 @@ int shell_boot_script(void)
 	uint8_t next = 0;
 
 	//first check if EEPROM is really there
+#ifdef CONFIG_EEPROM_I2W
 	eeprom_present(WRPC_FMC_I2C, FMC_EEPROM_ADR);
 	if (!has_eeprom)
 		return -1;
+#else
+	w1_eeprom_present(&wrpc_w1_bus);
+	if (!has_w1_eeprom)
+		return -1;
+#endif
 
 	while (1) {
-		cmd_len = eeprom_init_readcmd(WRPC_FMC_I2C, FMC_EEPROM_ADR,
-					      (uint8_t *)cmd_buf,
-					      SH_MAX_LINE_LEN, next);
+		if (has_eeprom)
+			cmd_len =
+			    eeprom_init_readcmd(WRPC_FMC_I2C, FMC_EEPROM_ADR,
+						(uint8_t *) cmd_buf,
+						SH_MAX_LINE_LEN, next);
+		if (has_w1_eeprom)
+			cmd_len =
+			    w1_eeprom_init_readcmd((uint8_t *) cmd_buf, next);
+
 		if (cmd_len <= 0) {
 			if (next == 0)
 				mprintf("Empty init script...\n");
