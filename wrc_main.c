@@ -141,7 +141,13 @@ static void ui_update()
 {
 
 	if (wrc_ui_mode == UI_GUI_MODE) {
-		wrc_mon_gui();
+		wrc_mon_gui(0);
+		if (uart_read_byte() == 27) {
+			shell_init();
+			wrc_ui_mode = UI_SHELL_MODE;
+		}
+	} else if (wrc_ui_mode == UI_SGUI_MODE) {
+		wrc_mon_gui(1);
 		if (uart_read_byte() == 27) {
 			shell_init();
 			wrc_ui_mode = UI_SHELL_MODE;

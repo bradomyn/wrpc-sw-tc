@@ -74,7 +74,7 @@ int wrc_mon_status()
 	return 1;
 }
 
-void wrc_mon_gui(void)
+void wrc_mon_gui(int simple)
 {
 	static uint32_t last = 0;
 	hexp_port_state_t ps;
@@ -136,10 +136,12 @@ void wrc_mon_gui(void)
 			cprintf(C_GREEN, "Locked  ");
 		else
 			cprintf(C_RED, "NoLock  ");
-		if (ps.rx_calibrated && ps.tx_calibrated)
-			cprintf(C_GREEN, "Calibrated  ");
-		else
-			cprintf(C_RED, "Uncalibrated  ");
+		if(!simple) {
+			if (ps.rx_calibrated && ps.tx_calibrated)
+				cprintf(C_GREEN, "Calibrated  ");
+			else
+				cprintf(C_RED, "Uncalibrated  ");
+		}
 #ifdef CONFIG_ETHERBONE
 		cprintf(C_WHITE, "\nIPv4: ");
 		getIP(ip);
@@ -159,19 +161,21 @@ void wrc_mon_gui(void)
 			cprintf(C_GREEN, "ON\n");
 		else
 			cprintf(C_RED, "OFF\n");
-		cprintf(C_GREY, "Synchronization source:    ");
-		cprintf(C_WHITE, "%s\n", cur_servo_state.sync_source);
+		if(!simple) {
+			cprintf(C_GREY, "Synchronization source:    ");
+			cprintf(C_WHITE, "%s\n", cur_servo_state.sync_source);
 
-		cprintf(C_GREY, "Aux clock status:          ");
+			cprintf(C_GREY, "Aux clock status:          ");
 
-		aux_stat = spll_get_aux_status(0);
+			aux_stat = spll_get_aux_status(0);
 
-		if (aux_stat & SPLL_AUX_ENABLED)
-			cprintf(C_GREEN, "enabled");
+			if (aux_stat & SPLL_AUX_ENABLED)
+				cprintf(C_GREEN, "enabled");
 
-		if (aux_stat & SPLL_AUX_LOCKED)
-			cprintf(C_GREEN, ", locked");
-		mprintf("\n");
+			if (aux_stat & SPLL_AUX_LOCKED)
+				cprintf(C_GREEN, ", locked");
+			mprintf("\n");
+		}
 
 		cprintf(C_BLUE, "\nTiming parameters:\n\n");
 
@@ -179,34 +183,46 @@ void wrc_mon_gui(void)
 		cprintf(C_WHITE, "%s ps\n", print64(cur_servo_state.mu));
 		cprintf(C_GREY, "Master-slave delay:      ");
 		cprintf(C_WHITE, "%s ps\n", print64(cur_servo_state.delay_ms));
-		cprintf(C_GREY, "Master PHY delays:       ");
-		cprintf(C_WHITE, "TX: %d ps, RX: %d ps\n",
-			(int32_t) cur_servo_state.delta_tx_m,
-			(int32_t) cur_servo_state.delta_rx_m);
-		cprintf(C_GREY, "Slave PHY delays:        ");
-		cprintf(C_WHITE, "TX: %d ps, RX: %d ps\n",
-			(int32_t) cur_servo_state.delta_tx_s,
-			(int32_t) cur_servo_state.delta_rx_s);
-		cprintf(C_GREY, "Total link asymmetry:    ");
-		cprintf(C_WHITE, "%9d ps\n",
-			(int32_t) (cur_servo_state.total_asymmetry));
-		cprintf(C_GREY, "Cable rtt delay:         ");
-		cprintf(C_WHITE, "%s ps\n", print64(cur_servo_state.mu -
-					cur_servo_state.delta_tx_m -
-					cur_servo_state.delta_rx_m -
-					cur_servo_state.delta_tx_s -
-					cur_servo_state.delta_rx_s));
-		cprintf(C_GREY, "Clock offset:            ");
-		cprintf(C_WHITE, "%9d ps\n",
-			(int32_t) (cur_servo_state.cur_offset));
+		if(!simple) {
+			cprintf(C_GREY, "Master PHY delays:       ");
+			cprintf(C_WHITE, "TX: %d ps, RX: %d ps\n",
+				(int32_t) cur_servo_state.delta_tx_m,
+				(int32_t) cur_servo_state.delta_rx_m);
+			cprintf(C_GREY, "Slave PHY delays:        ");
+			cprintf(C_WHITE, "TX: %d ps, RX: %d ps\n",
+				(int32_t) cur_servo_state.delta_tx_s,
+				(int32_t) cur_servo_state.delta_rx_s);
+			cprintf(C_GREY, "Total link asymmetry:    ");
+			cprintf(C_WHITE, "%9d ps\n",
+				(int32_t) (cur_servo_state.total_asymmetry));
+			cprintf(C_GREY, "Cable rtt delay:         ");
+			cprintf(C_WHITE, "%s ps\n", print64(cur_servo_state.mu -
+						cur_servo_state.delta_tx_m -
+						cur_servo_state.delta_rx_m -
+						cur_servo_state.delta_tx_s -
+						cur_servo_state.delta_rx_s));
+			cprintf(C_GREY, "Clock offset:            ");
+			cprintf(C_WHITE, "%9d ps\n",
+				(int32_t) (cur_servo_state.cur_offset));
+		}
+
+		if(simple) {
+			cprintf(C_GREEN, "Clock offset:            ");
+			cprintf(C_GREEN, "%9d ps\n",
+				(int32_t) (cur_servo_state.cur_offset));
+		}
+
 		cprintf(C_GREY, "Phase setpoint:          ");
 		cprintf(C_WHITE, "%9d ps\n",
 			(int32_t) (cur_servo_state.cur_setpoint));
 		cprintf(C_GREY, "Skew:                    ");
 		cprintf(C_WHITE, "%9d ps\n",
 			(int32_t) (cur_servo_state.cur_skew));
-		cprintf(C_GREY, "Manual phase adjustment: ");
-		cprintf(C_WHITE, "%9d ps\n", (int32_t) (wrc_man_phase));
+		
+		if(!simple) {
+			cprintf(C_GREY, "Manual phase adjustment: ");
+			cprintf(C_WHITE, "%9d ps\n", (int32_t) (wrc_man_phase));
+		}
 
 		cprintf(C_GREY, "Update counter:          ");
 		cprintf(C_WHITE, "%9d \n",

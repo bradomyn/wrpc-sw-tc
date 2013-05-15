@@ -19,7 +19,7 @@
 #undef ARRAY_SIZE
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
-void wrc_mon_gui(void);
+void wrc_mon_gui(int simple);
 void shell_init(void);
 int wrc_log_stats(uint8_t onetime);
 void wrc_debug_printf(int subsys, const char *fmt, ...);

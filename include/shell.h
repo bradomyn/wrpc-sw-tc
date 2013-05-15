@@ -4,6 +4,7 @@
 #define UI_SHELL_MODE 0
 #define UI_GUI_MODE 1
 #define UI_STAT_MODE 2
+#define UI_SGUI_MODE 3
 
 extern int wrc_ui_mode;
 
