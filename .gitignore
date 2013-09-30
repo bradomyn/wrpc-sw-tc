@@ -17,3 +17,8 @@ wrc.vhd
 .config.old
 include/config
 include/generated
+
+.cproject
+.project
+Debug/
+
