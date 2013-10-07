@@ -32,7 +32,7 @@
  * last changes:
  *    2013-10-04   Theodor Stana     t.stana@cern.ch     File created
  *==============================================================================
- * TODO: - 
+ * TODO: Fix flash_rsr() issue
  *==============================================================================
  */
 
@@ -106,6 +106,7 @@ static int spec_write_flash(struct spec_device *spec, int addr, int len)
 
 	while (len)
 	{
+		int j;
 		/* Set write length */
 		i = len;
 		if (len > 256)
@@ -121,7 +122,7 @@ static int spec_write_flash(struct spec_device *spec, int addr, int len)
 			}
 			flash_serase(addr);
 			sleep(1);
-			/* Can't understand why rsr is not working... */
+			/* FIXME: Can't understand why rsr is not working... */
 //			r = 0x01;
 //			while (r & 0x01)
 //			{
@@ -139,13 +140,14 @@ static int spec_write_flash(struct spec_device *spec, int addr, int len)
 		flash_write(addr, buf, i);
 		sleep(1);
 
-		/* As above, RSR is a mistery... */
+		/* FIXME: As above, RSR is a mistery... */
 //		while (flash_rsr() & 0x01)
 //			;
 
 		/* Setup next length and address */
 		len  -= i;
 		addr += i;
+		memcpy(buf, buf+i, len % 256);
 
 //		if (i != len) {
 //			fprintf(stderr, "Tried to write %i bytes, retval %i\n",
