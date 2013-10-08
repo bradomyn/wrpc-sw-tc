@@ -94,6 +94,7 @@ uint8_t eeprom_present(uint8_t i2cif, uint8_t i2c_addr)
 	if (magic == SDB_MAGIC) {
 		pp_printf("sdbfs: found at %i in W1\n", entry_points[i]);
 		wrc_sdb.drvdata = &wrpc_w1_bus;
+		wrc_sdb.entrypoint = entry_points[i];
 		wrc_sdb.read = sdb_w1_read;
 		wrc_sdb.write = sdb_w1_write;
 		has_eeprom = 1;
