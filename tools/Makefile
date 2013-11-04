@@ -1,7 +1,7 @@
 CFLAGS = -Wall -ggdb
 LDFLAGS = -lutil
 ALL    = genraminit genramvhd genrammif wrpc-uart-sw
-ALL   += wrpc-w1-read wrpc-w1-write flash-write
+ALL   += wrpc-w1-read wrpc-w1-write flash-write flash-read
 
 AS		= as
 LD		= ld
@@ -30,9 +30,11 @@ w1-host/libw1.a:
 flash-write: flash-write.c flash-host/libflash.a
 	$(CC) $(CFLAGS) -Iflash-host $^ -o $@
 
+flash-read: flash-read.c flash-host/libflash.a
+	$(CC) $(CFLAGS) -Iflash-host $^ -o $@
+
 flash-host/libflash.a:
 	$(MAKE) -C flash-host
-
 
 clean:
 	rm -f $(ALL) *.o *~
