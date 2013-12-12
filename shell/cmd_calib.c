@@ -28,7 +28,11 @@ static int cmd_calibration(const char *args[])
 		if (measure_t24p(&trans) < 0)
 			return -1;
 		return eeprom_phtrans(WRPC_FMC_I2C, FMC_EEPROM_ADR, &trans, 1);
-	} else if (!args[0]) {
+	} else if (!strcmp(args[0],"sweep"))
+		{
+			 calib_t24p_full_sweep();
+
+		}else if (!args[0]) {
 		if (eeprom_phtrans(WRPC_FMC_I2C, FMC_EEPROM_ADR, &trans, 0) > 0) {
 			mprintf("Found phase transition in EEPROM: %dps\n",
 				trans);

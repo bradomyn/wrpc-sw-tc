@@ -13,6 +13,7 @@ obj-y += \
 	shell/cmd_mac.o \
 	shell/cmd_init.o \
 	shell/cmd_ptrack.o \
+	shell/cmd_send.o \
 	shell/cmd_help.o
 
 obj-$(CONFIG_ETHERBONE) +=			shell/cmd_ip.o

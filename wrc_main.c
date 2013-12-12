@@ -84,13 +84,13 @@ static void wrc_initialize()
 
 	minic_init();
 	shw_pps_gen_init();
-	wrc_ptp_init();
+//	wrc_ptp_init();
 	//try reading t24 phase transition from EEPROM
 	calib_t24p(WRC_MODE_MASTER, &cal_phase_transition);
 
 #ifdef CONFIG_ETHERBONE
-	ipv4_init("wru1");
-	arp_init("wru1");
+//	ipv4_init("wru1");
+//	arp_init("wru1");
 #endif
 }
 
@@ -234,10 +234,13 @@ int main(void)
 	usleep_init();
 	shell_init();
 
-	wrc_ptp_set_mode(WRC_MODE_SLAVE);
-	wrc_ptp_start();
+//	wrc_ptp_set_mode(WRC_MODE_SLAVE);
+//	wrc_ptp_start();
 
 	//try to read and execute init script from EEPROM
+
+	for(;;)
+		ui_update();
 	shell_boot_script();
 
 	for (;;) {
@@ -267,8 +270,8 @@ int main(void)
 		}
 
 		ui_update();
-		wrc_ptp_update();
-		spll_update_aux_clocks();
+//		wrc_ptp_update();
+//		spll_update_aux_clocks();
 		check_stack();
 	}
 }

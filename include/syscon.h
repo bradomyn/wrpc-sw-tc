@@ -24,6 +24,10 @@ struct SYSCON_WB {
 #define GPIO_BTN2     SYSC_GPSR_BTN2
 #define GPIO_SFP_DET  SYSC_GPSR_SFP_DET
 
+#define GPIO_PIN_SR_EN (1<<12)
+#define GPIO_PIN_SR_D (1<<11)
+#define GPIO_PIN_SR_RST (1<<10)
+
 #define WRPC_FMC_I2C  0
 #define WRPC_SFP_I2C  1
 
