@@ -198,10 +198,34 @@ int mpll_update(struct spll_main_state *s, int tag, int source)
 	return SPLL_LOCKING;
 }
 
-int mpll_set_phase_shift(struct spll_main_state *s,
-				int desired_shift)
+#ifdef CONFIG_PPSI /* use __div64_32 from ppsi library to save libgcc memory */
+static int32_t from_picos(int32_t ps)
 {
-	s->phase_shift_target = desired_shift;
+	extern uint32_t __div64_32(uint64_t *n, uint32_t base);
+	uint64_t ups = ps;
+
+	if (ps >= 0) {
+		ups *= 1 << HPLL_N;
+		__div64_32(&ups, CLOCK_PERIOD_PICOSECONDS);
+		return ups;
+	}
+	ups = -ps * (1 << HPLL_N);
+	__div64_32(&ups, CLOCK_PERIOD_PICOSECONDS);
+	return -ups;
+}
+#else /* previous implementation: ptp-noposix has no __div64_32 available */
+static int32_t from_picos(int32_t ps)
+{
+	return (int32_t) ((int64_t) ps * (int64_t) (1 << HPLL_N) /
+			  (int64_t) CLOCK_PERIOD_PICOSECONDS);
+}
+#endif
+
+int mpll_set_phase_shift(struct spll_main_state *s,
+				int desired_shift_ps)
+{
+	int div = (DIVIDE_DMTD_CLOCKS_BY_2 ? 2 : 1);
+	s->phase_shift_target = from_picos(desired_shift_ps) / div;
 	return 0;
 }
 

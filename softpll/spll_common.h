@@ -66,6 +66,16 @@ typedef struct {
 	int yd[2], xd[2]; /* I/O delay lines */
 } spll_biquad_t;
 
+/* long-term-average filter */
+typedef struct {
+    int acc;
+    int n;
+    int window;
+    int pos;
+    int size;
+    int log[16];
+} spll_lta_t;
+
 /* initializes the PI controller state. Currently almost a stub. */
 void pi_init(spll_pi_t *pi);
 
