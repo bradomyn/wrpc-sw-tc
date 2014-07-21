@@ -223,13 +223,18 @@ static inline void sequencing_fsm(struct softpll_state *s, int tag_value, int ta
 
 static inline void update_loops(struct softpll_state *s, int tag_value, int tag_source)
 {
+//	if(tag_source != 8)
+//    	    TRACE("%d %d\n", tag_value, tag_source);
+
+	
 	helper_update(&s->helper, tag_value, tag_source);
 	
 	if(s->helper.ld.locked)
 	{
 		mpll_update(&s->mpll, tag_value, tag_source);
 
-		if(s->seq_state == SEQ_READY)
+	#if 0
+	if(s->seq_state == SEQ_READY)
 		{
 			if(s->mode == SPLL_MODE_SLAVE)
 			{
@@ -240,6 +245,7 @@ static inline void update_loops(struct softpll_state *s, int tag_value, int tag_
 
 			update_ptrackers(s, tag_value, tag_source);
 		}
+#endif
 	}
 }
 
@@ -291,7 +297,7 @@ void spll_init(int mode, int slave_ref_channel, int align_pps)
 	SPLL->RCER = 0;
 	SPLL->ECCR = 0;
 	SPLL->OCCR = 0;
-	SPLL->DEGLITCH_THR = 1000;
+	SPLL->DEGLITCH_THR = 2000;
 
 	PPSG->ESCR = 0;
 	PPSG->CR = PPSG_CR_CNT_EN | PPSG_CR_CNT_RST | PPSG_CR_PWIDTH_W(PPS_WIDTH);
@@ -470,7 +476,11 @@ void spll_show_stats()
 		     softpll.helper.pi.y, softpll.mpll.pi.y, 
 		     softpll.delock_count);
 
+	TRACE_DEV("%d %d %d %d\n", softpll.mpll.tag_ref_d, softpll.mpll.tag_out_d, softpll.mpll.sample_n, softpll.mpll.tag_ref_d- softpll.mpll.tag_ref);
+
 }
+
+
 
 int spll_shifter_busy(int channel)
 {
@@ -655,6 +665,6 @@ int spll_measure_frequency(int osc)
 			break;
 	}
 
-    timer_delay(2000);
+    timer_delay(200000);
     return (*reg ) & (0xfffffff);
 }
