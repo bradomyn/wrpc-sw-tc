@@ -55,7 +55,8 @@ void mpll_init(struct spll_main_state *s, int id_ref,
 
 void mpll_start(struct spll_main_state *s)
 {
-	disable_irq();
+	TRACE("MPLL_Start [dac %d]\n", s->dac_index);
+	//disable_irq();
 	s->adder_ref = s->adder_out = 0;
 	s->tag_ref = -1;
 	s->tag_out = -1;
@@ -74,8 +75,9 @@ void mpll_start(struct spll_main_state *s)
 
 	spll_enable_tagger(s->id_ref, 1);
 	spll_enable_tagger(s->id_out, 1);
-	spll_debug(DBG_EVENT | DBG_MAIN, DBG_EVT_START, 1);
-	enable_irq();
+	//spll_debug(DBG_EVENT | DBG_MAIN, DBG_EVT_START, 1);
+	TRACE("MPLL_Start_Done [ref %d out %d]\n",s->id_ref, s->id_out);
+	//enable_irq();
 }
 
 void mpll_stop(struct spll_main_state *s)
@@ -169,11 +171,13 @@ int mpll_update(struct spll_main_state *s, int tag, int source)
 		SPLL->DAC_MAIN = SPLL_DAC_MAIN_VALUE_W(y)
 			| SPLL_DAC_MAIN_DAC_SEL_W(s->dac_index);
 
-		spll_debug(DBG_MAIN | DBG_REF, s->tag_ref + s->adder_ref, 0);
-		spll_debug(DBG_MAIN | DBG_TAG, s->tag_out + s->adder_out, 0);
-		spll_debug(DBG_MAIN | DBG_ERR, err, 0);
-		spll_debug(DBG_MAIN | DBG_SAMPLE_ID, s->sample_n++, 0);
-		spll_debug(DBG_MAIN | DBG_Y, y, 1);
+
+		y=0;
+		//spll_debug(DBG_MAIN | DBG_REF, s->tag_ref + s->adder_ref, 0);
+		//spll_debug(DBG_MAIN | DBG_TAG, s->tag_out + s->adder_out, 0);
+		//spll_debug(DBG_MAIN | DBG_ERR, err, 0);
+		//spll_debug(DBG_MAIN | DBG_SAMPLE_ID, s->sample_n++, 0);
+		//spll_debug(DBG_MAIN | DBG_Y, y, 1);
 
 		s->tag_out = -1;
 		s->tag_ref = -1;

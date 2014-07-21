@@ -65,10 +65,10 @@ int main(void)
 	rtipc_init();
 	
 
-	spll_init(SPLL_MODE_DISABLED,0 ,0);
+//	spll_init(SPLL_MODE_DISABLED,0 ,0);
 
-	check_vco_frequencies();
-	spll_init(SPLL_MODE_GRAND_MASTER,0 ,0);
+//	check_vco_frequencies();
+	spll_init(SPLL_MODE_SLAVE,0 ,0);
 
 	for(;;)
 	{
@@ -80,8 +80,8 @@ int main(void)
 				spll_show_stats();
 				start_tics = tics;
 			}
-	    rts_update();
-	    rtipc_action();
+//	    rts_update();
+//	    rtipc_action();
 		spll_update();
 	}
 

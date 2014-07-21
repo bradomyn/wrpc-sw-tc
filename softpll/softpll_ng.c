@@ -188,13 +188,16 @@ static inline void sequencing_fsm(struct softpll_state *s, int tag_value, int ta
 
 		case SEQ_START_MAIN:
 		{
+			//mprintf("SeqStartMain s %d\n\n",s->seq_state);			
 			mpll_start(&s->mpll);
 			s->seq_state = SEQ_WAIT_MAIN;
+			//mprintf("NState %dn", s->seq_state);
 			break;
 		}
 
 		case SEQ_WAIT_MAIN:
 		{
+			//mprintf("SeqWaitMain\n");
 			if (s->mpll.ld.locked) 
 			{
 				start_ptrackers(s);
@@ -205,6 +208,7 @@ static inline void sequencing_fsm(struct softpll_state *s, int tag_value, int ta
 
 		case SEQ_READY:
 		{
+			//mprintf("SeqRdy\n");
 			if (s->mode == SPLL_MODE_GRAND_MASTER && !external_locked(&s->ext))
 			{
 				s->delock_count++;
@@ -297,7 +301,7 @@ void spll_init(int mode, int slave_ref_channel, int align_pps)
 	SPLL->RCER = 0;
 	SPLL->ECCR = 0;
 	SPLL->OCCR = 0;
-	SPLL->DEGLITCH_THR = 2000;
+	SPLL->DEGLITCH_THR = 1000;
 
 	PPSG->ESCR = 0;
 	PPSG->CR = PPSG_CR_CNT_EN | PPSG_CR_CNT_RST | PPSG_CR_PWIDTH_W(PPS_WIDTH);
@@ -645,7 +649,7 @@ void spll_update()
 			external_align_fsm(&softpll.ext);
 			break;
 	}
-	spll_update_aux_clocks();
+	//spll_update_aux_clocks();
 }
 
 int spll_measure_frequency(int osc)

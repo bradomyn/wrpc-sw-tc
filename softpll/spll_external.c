@@ -53,7 +53,7 @@ void external_start(struct spll_external_state *s)
 	SPLL->ECCR = SPLL_ECCR_EXT_EN;
 TRACE("ECCR %x\n", SPLL->ECCR);
 
-	spll_debug (DBG_EVENT | DBG_EXT, DBG_EVT_START, 1);
+//	spll_debug (DBG_EVENT | DBG_EXT, DBG_EVT_START, 1);
 	s->align_state = ALIGN_STATE_START;
 	s->enabled = 1;
 }
@@ -106,7 +106,9 @@ void external_align_fsm( struct spll_external_state *s )
 
 			if(s->helper->ld.locked)
 			{
+				disable_irq();
 				mpll_start(s->main);
+				enable_irq();
 				s->align_state = ALIGN_STATE_START_MAIN;
 			}
 			break;

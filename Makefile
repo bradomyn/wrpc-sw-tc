@@ -21,7 +21,7 @@ obj-y = arch/lm32/crt0.o arch/lm32/irq.o
 LDS-$(CONFIG_WR_NODE)   = arch/lm32/ram.ld
 LDS-$(CONFIG_WR_SWITCH) = arch/lm32/ram-wrs.ld
 
-obj-$(CONFIG_WR_NODE)   += wrc_main.o
+obj-$(CONFIG_WR_NODE)   += wrc_main.o spll_test.o
 obj-$(CONFIG_WR_SWITCH) += wrs_main.o
 obj-$(CONFIG_WR_SWITCH) += ipc/minipc-mem-server.o ipc/rt_ipc.o 
 
