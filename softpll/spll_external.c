@@ -13,6 +13,9 @@
 #include "spll_external.h"
 #include "spll_debug.h"
 
+#include "trace.h"
+#include "irq.h"
+
 #define ALIGN_STATE_EXT_OFF 0
 #define ALIGN_STATE_START 1
 #define ALIGN_STATE_INIT_CSYNC 2
@@ -28,7 +31,8 @@
 
 #define EXT_PERIOD_NS 100
 #define EXT_FREQ_HZ 10000000
-#define EXT_PPS_LATENCY_PS 30000
+#define EXT_PPS_LATENCY_PS 30000 // fixme: make configurable
+
 
 void external_init(volatile struct spll_external_state *s, int ext_ref,
 			  int realign_clocks)
@@ -39,8 +43,6 @@ void external_init(volatile struct spll_external_state *s, int ext_ref,
     helper_init(s->helper, idx);
     mpll_init(s->main, idx, spll_n_chan_ref);
 
-
-    TRACE("helper-idx %d main-idx %d\n", idx, spll_n_chan_ref);
     s->align_state = ALIGN_STATE_EXT_OFF;
     s->enabled = 0;
 }
@@ -48,28 +50,27 @@ void external_init(volatile struct spll_external_state *s, int ext_ref,
 void external_start(struct spll_external_state *s)
 {
     helper_start(s->helper);
-//  mpll_start(s->main);
 
 	SPLL->ECCR = SPLL_ECCR_EXT_EN;
-TRACE("ECCR %x\n", SPLL->ECCR);
 
-//	spll_debug (DBG_EVENT | DBG_EXT, DBG_EVT_START, 1);
 	s->align_state = ALIGN_STATE_START;
 	s->enabled = 1;
+	spll_debug (DBG_EVENT | DBG_EXT, DBG_EVT_START, 1);
 }
 
 int external_locked(struct spll_external_state *s)
 {
-	if (!s->helper->ld.locked && s->main->ld.locked)
+	if (!s->helper->ld.locked || !s->main->ld.locked)
 		return 0;
 
 	switch(s->align_state)
 	{
 		case ALIGN_STATE_EXT_OFF:
 		case ALIGN_STATE_START:
+		case ALIGN_STATE_START_MAIN:
 		case ALIGN_STATE_INIT_CSYNC:
 		case ALIGN_STATE_WAIT_CSYNC:
-		case ALIGN_STATE_START_ALIGNMENT:
+
 			return 0;
 		default:
 			return 1;
@@ -112,13 +113,9 @@ void external_align_fsm( struct spll_external_state *s )
 				s->align_state = ALIGN_STATE_START_MAIN;
 			}
 			break;
-		    
-
 
 		case ALIGN_STATE_START_MAIN:
 			SPLL->AL_CR = 2;
-
-			//TRACE("CIN %d CREF %d\n", SPLL->AL_CIN, SPLL->AL_CREF);
 
 			if(s->helper->ld.locked && s->main->ld.locked)
 			{
@@ -129,8 +126,6 @@ void external_align_fsm( struct spll_external_state *s )
     			TRACE_DEV("EXT: DMTD locked.\n");
 			}
 			break;
-
-		
 
 		case ALIGN_STATE_INIT_CSYNC:
 			if (PPSG->ESCR & PPSG_ESCR_SYNC)
@@ -195,6 +190,10 @@ void external_align_fsm( struct spll_external_state *s )
 			break;
 
 		case ALIGN_STATE_LOCKED:
+			if(!external_locked(s))
+			{
+				s->align_state = ALIGN_STATE_START;
+			}
 			break;
 
 		default:

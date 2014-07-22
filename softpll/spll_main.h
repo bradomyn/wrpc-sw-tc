@@ -23,7 +23,7 @@ struct spll_main_state {
 	spll_lock_det_t ld;
 
 	int adder_ref, adder_out, tag_ref, tag_out, tag_ref_d, tag_out_d;
-
+	
 	// tag sequencing stuff
 	uint32_t seq_ref, seq_out;
 	int match_state;

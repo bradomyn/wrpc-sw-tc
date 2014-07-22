@@ -7,6 +7,7 @@
 
 const char *build_revision;
 const char *build_date;
+
 static int calc_apr(int meas_min, int meas_max, int f_center )
 {
 	// apr_min is in PPM
@@ -56,7 +57,7 @@ int main(void)
 
 	uart_init_hw();
 	
-	TRACE("WR Switch Real Time Subsystem (c) CERN 2011 - 2013\n");
+	TRACE("WR Switch Real Time Subsystem (c) CERN 2011 - 2014\n");
 	TRACE("Revision: %s, built %s.\n", build_revision, build_date);
 	TRACE("--");
 
@@ -64,24 +65,17 @@ int main(void)
 	rts_init();
 	rtipc_init();
 	
-
-//	spll_init(SPLL_MODE_DISABLED,0 ,0);
-
-//	check_vco_frequencies();
-	spll_init(SPLL_MODE_SLAVE,0 ,0);
-
 	for(;;)
 	{
 			uint32_t tics = timer_get_tics();
 
 			if(time_after(tics, start_tics + TICS_PER_SECOND/5))
 			{
-//				TRACE("tick!\n");
 				spll_show_stats();
 				start_tics = tics;
 			}
-//	    rts_update();
-//	    rtipc_action();
+	    rts_update();
+	    rtipc_action();
 		spll_update();
 	}
 

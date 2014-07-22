@@ -168,3 +168,14 @@ int biquad_update(spll_biquad_t *bq, int x)
 	return y;
 }
 
+const char *stringlist_lookup(const struct stringlist_entry *slist, int id)
+{
+	int i;
+
+	for(i=0; slist[i].str; i++)
+		if(slist[i].id == id)
+		{
+			return slist[i].str;
+		}
+	return "<unknown>";
+}

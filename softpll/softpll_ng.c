@@ -51,8 +51,6 @@ int spll_n_chan_ref, spll_n_chan_out;
 #define AUX_ALIGN_PHASE 3
 #define AUX_READY 4
 
-#define TRACE_DEV pp_printf
-
 struct spll_aux_state {
 	int seq_state;
 	int32_t phase_target;
@@ -75,6 +73,21 @@ struct softpll_state {
 	struct spll_main_state mpll;
 	struct spll_aux_state aux[MAX_CHAN_AUX];
 	struct spll_ptracker_state ptrackers[MAX_PTRACKERS];
+};
+
+static const struct stringlist_entry seq_states [] =
+{
+	{ SEQ_START_EXT, "start-ext" },
+	{ SEQ_WAIT_EXT, "wait-ext" },
+	{ SEQ_START_HELPER, "start-helper" },
+	{ SEQ_WAIT_HELPER, "wait-helper" },
+	{ SEQ_START_MAIN, "start-main" },
+	{ SEQ_WAIT_MAIN, "wait-main" },
+	{ SEQ_DISABLED, "disabled" },
+	{ SEQ_READY, "ready" },
+	{ SEQ_CLEAR_DACS, "clear-dacs" },
+	{ SEQ_WAIT_CLEAR_DACS, "wait-clear-dacs" },
+	{ 0, NULL }
 };
 
 static volatile struct softpll_state softpll;
@@ -208,7 +221,6 @@ static inline void sequencing_fsm(struct softpll_state *s, int tag_value, int ta
 
 		case SEQ_READY:
 		{
-			//mprintf("SeqRdy\n");
 			if (s->mode == SPLL_MODE_GRAND_MASTER && !external_locked(&s->ext))
 			{
 				s->delock_count++;
@@ -227,9 +239,6 @@ static inline void sequencing_fsm(struct softpll_state *s, int tag_value, int ta
 
 static inline void update_loops(struct softpll_state *s, int tag_value, int tag_source)
 {
-//	if(tag_source != 8)
-//    	    TRACE("%d %d\n", tag_value, tag_source);
-
 	
 	helper_update(&s->helper, tag_value, tag_source);
 	
@@ -237,8 +246,7 @@ static inline void update_loops(struct softpll_state *s, int tag_value, int tag_
 	{
 		mpll_update(&s->mpll, tag_value, tag_source);
 
-	#if 0
-	if(s->seq_state == SEQ_READY)
+		if(s->seq_state == SEQ_READY)
 		{
 			if(s->mode == SPLL_MODE_SLAVE)
 			{
@@ -249,7 +257,6 @@ static inline void update_loops(struct softpll_state *s, int tag_value, int tag_
 
 			update_ptrackers(s, tag_value, tag_source);
 		}
-#endif
 	}
 }
 
@@ -473,14 +480,12 @@ void spll_get_num_channels(int *n_ref, int *n_out)
 void spll_show_stats()
 {
 	if (softpll.mode > 0)
-		    TRACE_DEV("softpll: irq_count %d sequencer_state %d mode %d "
+		    TRACE_DEV("softpll: irqs %d seq %s mode %d "
 		     "alignment_state %d HL%d ML%d HY=%d MY=%d DelCnt=%d\n",
-		     irq_count, softpll.seq_state, softpll.mode,
+		     irq_count, stringlist_lookup(seq_states, softpll.seq_state), softpll.mode,
 		     softpll.ext.align_state, softpll.helper.ld.locked, softpll.mpll.ld.locked,
 		     softpll.helper.pi.y, softpll.mpll.pi.y, 
 		     softpll.delock_count);
-
-	TRACE_DEV("%d %d %d %d\n", softpll.mpll.tag_ref_d, softpll.mpll.tag_out_d, softpll.mpll.sample_n, softpll.mpll.tag_ref_d- softpll.mpll.tag_ref);
 
 }
 
@@ -649,7 +654,7 @@ void spll_update()
 			external_align_fsm(&softpll.ext);
 			break;
 	}
-	//spll_update_aux_clocks();
+	spll_update_aux_clocks();
 }
 
 int spll_measure_frequency(int osc)

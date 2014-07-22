@@ -24,6 +24,8 @@
 #define SPLL_LOCKED 	1
 #define SPLL_LOCKING 	0
 
+
+
 /* Number of reference/output channels. We don't plan to have more than one
    SoftPLL instantiation per project, so these can remain global. */
 extern int spll_n_chan_ref, spll_n_chan_out;
@@ -76,6 +78,11 @@ typedef struct {
     int log[16];
 } spll_lta_t;
 
+struct stringlist_entry {
+	int id;
+	const char *str;
+};
+
 /* initializes the PI controller state. Currently almost a stub. */
 void pi_init(spll_pi_t *pi);
 
@@ -92,5 +99,8 @@ void spll_enable_tagger(int channel, int enable);
 
 void biquad_init(spll_biquad_t *bq, const int *coefs, int shift);
 int biquad_update(spll_biquad_t *bq, int x);
+
+const char *stringlist_lookup(const struct stringlist_entry *slist, int id);
+
 
 #endif // __SPLL_COMMON_H

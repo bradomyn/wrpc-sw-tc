@@ -65,7 +65,6 @@ int helper_update(struct spll_helper_state *s, int tag,
 				err = HELPER_ERROR_CLAMP;
 		}
 
-//		err = biquad_update(&s->precomp, err);
 
 		if ((tag + s->p_adder) > HELPER_TAG_WRAPAROUND
 		    && s->p_setpoint > HELPER_TAG_WRAPAROUND) {
