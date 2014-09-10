@@ -90,8 +90,14 @@ int rts_lock_channel(int channel, int priority)
 
 
 	TRACE("RT [slave]: Locking to: %d (prio %d)\n", channel, priority);
-	spll_init(SPLL_MODE_SLAVE, channel, 0);
-    pstate.current_ref = channel;
+	if(priority == 0) 
+	{
+		spll_init(SPLL_MODE_SLAVE, channel, 0);
+		pstate.current_ref = channel;
+	}
+	else
+		TRACE("RT [slave]: Backup port !!! : %d (prio %d)\n", channel);
+    
 
 	return 0;
 }
