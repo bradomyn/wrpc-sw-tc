@@ -77,18 +77,50 @@ struct softpll_state {
 
 static const struct stringlist_entry seq_states [] =
 {
-	{ SEQ_START_EXT, "start-ext" },
-	{ SEQ_WAIT_EXT, "wait-ext" },
-	{ SEQ_START_HELPER, "start-helper" },
-	{ SEQ_WAIT_HELPER, "wait-helper" },
-	{ SEQ_START_MAIN, "start-main" },
-	{ SEQ_WAIT_MAIN, "wait-main" },
-	{ SEQ_DISABLED, "disabled" },
-	{ SEQ_READY, "ready" },
-	{ SEQ_CLEAR_DACS, "clear-dacs" },
+	{ SEQ_START_EXT,       "start-ext      " },
+	{ SEQ_WAIT_EXT,        "wait-ext       " },
+	{ SEQ_START_HELPER,    "start-helper   " },
+	{ SEQ_WAIT_HELPER,     "wait-helper    " },
+	{ SEQ_START_MAIN,      "start-main     " },
+	{ SEQ_WAIT_MAIN,       "wait-main      " },
+	{ SEQ_DISABLED,        "disabled       " },
+	{ SEQ_READY,           "ready          " },
+	{ SEQ_CLEAR_DACS,      "clear-dacs     " },
 	{ SEQ_WAIT_CLEAR_DACS, "wait-clear-dacs" },
 	{ 0, NULL }
 };
+
+static const struct stringlist_entry softpll_modes [] =
+{
+	{ 0,                             "undifiend   (0)" },
+	{ SPLL_MODE_GRAND_MASTER,        "grandmaster (1)" },
+	{ SPLL_MODE_FREE_RUNNING_MASTER, "free master (2)" },
+	{ SPLL_MODE_SLAVE,               "slave       (3)" },
+	{ SPLL_MODE_DISABLED,            "disabled    (4)" }
+};
+
+#define ALIGN_STATE_EXT_OFF 0
+#define ALIGN_STATE_START 1
+#define ALIGN_STATE_INIT_CSYNC 2
+#define ALIGN_STATE_WAIT_CSYNC 3
+#define ALIGN_STATE_START_ALIGNMENT 7
+#define ALIGN_STATE_WAIT_SAMPLE 4
+#define ALIGN_STATE_COMPENSATE_DELAY 5
+#define ALIGN_STATE_LOCKED 6
+#define ALIGN_STATE_START_MAIN 8
+
+static const struct stringlist_entry align_states [] =
+{
+	{ ALIGN_STATE_EXT_OFF,         "ext off     (0)" },
+	{ ALIGN_STATE_START,           "start       (1)" },
+	{ ALIGN_STATE_WAIT_CSYNC,      "wait csync  (2)" },
+	{ ALIGN_STATE_WAIT_SAMPLE,     "wait sample (3)" },
+	{ ALIGN_STATE_COMPENSATE_DELAY,"compesate d (4)" },
+	{ ALIGN_STATE_LOCKED,          "locked      (5)" },
+	{ ALIGN_STATE_START_ALIGNMENT, "start align (6)" },
+	{ ALIGN_STATE_START_MAIN,      "start main  (7)" }
+};
+
 
 static volatile struct softpll_state softpll;
 
@@ -471,11 +503,17 @@ void spll_get_num_channels(int *n_ref, int *n_out)
 
 void spll_show_stats()
 {
+  
+  
 	if (softpll.mode > 0)
-		    TRACE_DEV("softpll: irqs %d seq %s mode %d "
-		     "alignment_state %d HL%d ML%d HY=%d MY=%d DelCnt=%d\n",
-		     irq_count, stringlist_lookup(seq_states, softpll.seq_state), softpll.mode,
-		     softpll.ext.align_state, softpll.helper.ld.locked, softpll.mpll.ld.locked,
+		    TRACE_DEV("softpll: irqs %d; seq %s; mode %s; "
+		     "alignment_state %s; hLocked-%s; mLocked-%s; hPiY=%d; mPiY=%d; DelCnt=%d\n",
+		     irq_count, 
+		     stringlist_lookup(seq_states, softpll.seq_state), 
+		     stringlist_lookup(softpll_modes, softpll.mode),
+		     stringlist_lookup(align_states, softpll.ext.align_state), 
+		     (softpll.helper.ld.locked ? "yes":" no"), 
+		     (softpll.mpll.ld.locked ? "yes":" no"),
 		     softpll.helper.pi.y, softpll.mpll.pi.y,
 		     softpll.delock_count);
 }
