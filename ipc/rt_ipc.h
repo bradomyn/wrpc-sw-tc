@@ -54,6 +54,9 @@
 /* PLL disabled */
 #define RTS_MODE_DISABLED 4
 
+/* backup slave*/
+#define RTS_MODE_BC_BACKUP 5
+
 /* null reference input */
 #define REF_NONE 255
 
@@ -86,6 +89,9 @@ struct rts_pll_state {
 
 	/* current reference source - or REF_NONE if free-running or grandmaster */
 	uint32_t current_ref;
+
+	/* backup reference source - or REF_NONE if no backup */
+	uint32_t backup_ref;
 
 	/* mode of operation (RTS_MODE_xxx) */
 	uint32_t mode;

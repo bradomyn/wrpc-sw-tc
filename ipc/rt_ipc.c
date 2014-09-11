@@ -33,6 +33,7 @@ static void clear_state()
     }
     pstate.flags = 0;
     pstate.current_ref = 0;
+    pstate.backup_ref = 0;
     pstate.mode = RTS_MODE_DISABLED;
     pstate.ipc_count = 0;
 }
@@ -61,6 +62,7 @@ int rts_set_mode(int mode)
 		{ RTS_MODE_GM_FREERUNNING, SPLL_MODE_FREE_RUNNING_MASTER, 1, "Grand Master (free-running clock)" },
 		{ RTS_MODE_BC, SPLL_MODE_SLAVE, 0, "Boundary Clock (slave)" },
 		{ RTS_MODE_DISABLED, SPLL_MODE_DISABLED, 1, "PLL disabled" },
+		{ RTS_MODE_BC_BACKUP, SPLL_MODE_BACKUP_SLAVE, 2, "Activate backup" },
 		{ 0,0,0, NULL }
 	};
 
@@ -70,7 +72,9 @@ int rts_set_mode(int mode)
 		if(mode == options[i].mode_rt)
 		{
 			TRACE("RT: Setting mode to %s.\n", options[i].desc);
-			if(options[i].do_init)
+			if(options[i].do_init > 1)
+				TRACE("RT: switchover here.\n");
+			else if(options[i].do_init)
 				spll_init(options[i].mode_spll, 0, 1);
 			else
 				spll_init(SPLL_MODE_DISABLED, 0, 0);
@@ -82,7 +86,7 @@ int rts_set_mode(int mode)
 /* Reference channel configuration (BC mode only) */
 int rts_lock_channel(int channel, int priority)
 {
-	if(pstate.mode != RTS_MODE_BC)
+	if(pstate.mode != RTS_MODE_BC && pstate.mode != RTS_MODE_BC_BACKUP)
 	{
         TRACE("trying to lock while not in slave mode,..\n");
 		return -1;
@@ -90,13 +94,17 @@ int rts_lock_channel(int channel, int priority)
 
 
 	TRACE("RT [slave]: Locking to: %d (prio %d)\n", channel, priority);
+	pstate.channels[channel].priority = priority;
 	if(priority == 0) 
 	{
 		spll_init(SPLL_MODE_SLAVE, channel, 0);
 		pstate.current_ref = channel;
 	}
 	else
+	{
+		pstate.backup_ref = channel;
 		TRACE("RT [slave]: Backup port !!! : %d (prio %d)\n", channel);
+	}
     
 
 	return 0;
@@ -162,6 +170,7 @@ static int rts_get_state_func(const struct minipc_pd *pd, uint32_t *args, void *
 
     /* gaaaah, somebody should write a SWIG plugin for generating this stuff. */
     tmp->current_ref = htonl(pstate.current_ref);
+    tmp->backup_ref = htonl(pstate.backup_ref);
     tmp->flags = htonl(pstate.flags);
     tmp->holdover_duration = htonl(pstate.holdover_duration);
     tmp->mode = htonl(pstate.mode);

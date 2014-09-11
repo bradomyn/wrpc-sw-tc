@@ -28,6 +28,9 @@
 /* Disabled mode: SoftPLL inactive */
 #define SPLL_MODE_DISABLED 4
 
+/*Slave backup mode*/
+# define SPLL_MODE_BACKUP_SLAVE 5 
+
 /* Shortcut for 'channels' parameter in various API functions to perform operation on all channels */
 #define SPLL_ALL_CHANNELS 0xffffffff
 
