@@ -5,6 +5,9 @@
 #define WRC_MODE_GM 1
 #define WRC_MODE_MASTER 2
 #define WRC_MODE_SLAVE 3
+
+#define WRC_DELAY_REQ_RESP 0
+#define WRC_PDELAY 1
 extern int ptp_mode;
 
 int wrc_ptp_init();

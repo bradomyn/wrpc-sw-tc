@@ -236,6 +236,11 @@ int main(void)
 	shell_init();
 
 	wrc_ptp_set_mode(WRC_MODE_SLAVE);
+
+#ifdef CONFIG_PEER_DELAY
+    wrc_ptp_set_sync_mech(WRC_PDELAY);
+#endif
+
 	wrc_ptp_start();
 
 	//try to read and execute init script from EEPROM
