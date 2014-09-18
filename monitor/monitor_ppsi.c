@@ -60,7 +60,8 @@ int wrc_mon_status()
 	cprintf(C_BLUE, "\n\nPTP status: ");
 	cprintf(C_WHITE, "%s", ip ? ip->name : "unknown");
 
-	if ((!cur_servo_state.valid) || (ppi->state != PPS_SLAVE)) {
+	if ((!cur_servo_state.valid) || (ppi->state != PPS_SLAVE)
+    || (ppi->state != PPS_PCLOCK)) {
 		cprintf(C_RED,
 			"\n\nSync info not valid\n\n");
 		return 0;
